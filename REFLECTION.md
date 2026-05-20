@@ -11,9 +11,11 @@ Berdasarkan eksperimen yang kalian lakukan, jelaskan dengan **kata-kata kalian s
 - Manakah yang berubah saat training berjalan, dan manakah yang ditentukan oleh kalian sebelum training?
 
 **Jawaban:**
-> **Parameter** adalah nilai yang dipelajari dan diperbarui secara otomatis oleh model dari data selama *training* berlangsung (contoh: bobot/weights dan bias pada neuron). Sedangkan **Hyperparameter** adalah pengaturan yang kita tentukan manual sebelum *training* dimulai (contoh: jenis *optimizer*, *learning rate*, jumlah *hidden layer*, jumlah *neuron*, *batch size*, *epoch*, dan nilai *dropout*). 
-> 
-> Kesimpulannya: Parameter **berubah** saat *training* berjalan, sedangkan *hyperparameter* **ditentukan sebelum** *training* dan nilainya tetap selama proses tersebut.
+> Parameter adalah nilai yang dipelajari otomatis oleh model selama training, yaitu bobot (weights) dan bias pada setiap neuron. Nilai parameter berubah terus saat proses feed forward dan back propagation berjalan untuk meminimalkan loss.  
+>
+> Hyperparameter adalah pengaturan yang ditentukan sebelum training dimulai, seperti jumlah hidden layer, jumlah neuron, activation function, optimizer, learning rate, batch size, epoch, dan dropout. Hyperparameter tidak dipelajari otomatis oleh model, tetapi dipilih oleh kami untuk mengontrol cara model belajar.  
+>
+> Jadi, parameter berubah selama training berlangsung, sedangkan hyperparameter ditentukan oleh kami sebelum training dimulai.
 
 ---
 
@@ -22,7 +24,9 @@ Berdasarkan eksperimen yang kalian lakukan, jelaskan dengan **kata-kata kalian s
 Dari semua hyperparameter yang kalian eksperimen, mana yang menurut kalian memberikan **dampak paling besar** terhadap akurasi? Mengapa demikian — apa yang kalian amati pada kurva loss/accuracy?
 
 **Jawaban:**
-> Mengubah **Optimizer** (dari SGD ke Adam) memberikan dampak terbesar. Pada Eksperimen #1, akurasi langsung naik signifikan (~85% ke ~88%) tanpa mengubah arsitektur model sama sekali. Pada kurva *loss* dan *accuracy*, penggunaan Adam membuat penurunan *loss* jauh lebih cepat, tajam, dan stabil sejak *epoch-epoch* awal karena Adam memiliki mekanisme adaptif untuk menyesuaikan *learning rate* pada tiap parameter secara otomatis.
+> Hyperparameter yang paling berdampak menurut kami adalah optimizer dan jumlah neuron/layer. Saat optimizer diubah dari SGD menjadi Adam, akurasi meningkat cukup besar dan kurva loss turun lebih cepat serta lebih stabil. Adam mampu menyesuaikan learning rate secara adaptif sehingga proses training lebih efisien.  
+>
+> Penambahan neuron dan hidden layer juga meningkatkan akurasi karena model dapat mempelajari pola yang lebih kompleks. Pada kurva accuracy terlihat train dan validation accuracy meningkat lebih cepat dibanding baseline. Namun jika neuron terlalu banyak, gap antara train dan validation mulai membesar sehingga muncul tanda overfitting.
 
 ---
 
@@ -33,9 +37,15 @@ Coba set `LEARNING_RATE = 1.0` (atau bahkan lebih besar) dan jalankan sekali. Ap
 $$W_j = W_j - \lambda \frac{\partial F(W_j)}{\partial W_j}$$
 
 **Jawaban:**
-> Jika `LEARNING_RATE = 1.0`, kurva *loss* akan sangat berosilasi (naik-turun secara ekstrem) atau bahkan *diverging* (menghasilkan nilai NaN) dan gagal konvergen. 
-> 
-> Berdasarkan rumus di atas, $\lambda$ merepresentasikan *learning rate*. Jika nilai $\lambda$ terlalu besar (1.0), langkah pengurangan atau penambahan bobot ($W_j$) menjadi terlalu drastis. Akibatnya, model akan terus-menerus melompati (*overshooting*) titik minimum *loss* yang ideal dan tidak akan bisa menemukan titik konvergensi yang tepat.
+> Saat learning rate diatur menjadi 1.0, kurva loss menjadi tidak stabil dan bahkan bisa meningkat sangat besar. Accuracy juga sulit naik karena proses update bobot terlalu ekstrem.  
+>
+> Pada rumus:
+>
+> $begin:math:display$
+W\_j \= W\_j \- \\lambda \\frac\{\\partial F\(W\_j\)\}\{\\partial W\_j\}
+$end:math:display$
+>
+> nilai λ (learning rate) mengontrol seberapa besar perubahan bobot setiap iterasi. Jika λ terlalu besar, update bobot akan “melompat-lompat” melewati titik minimum sehingga model gagal konvergen. Karena itu learning rate harus dipilih dengan hati-hati agar training stabil.
 
 ---
 
@@ -49,11 +59,11 @@ Bandingkan eksperimen dengan **batch size kecil** (misal 16) vs **batch size bes
 Apakah pengamatan ini sesuai dengan teori di slide kuliah?
 
 **Jawaban:**
-> 1. **Waktu training:** *Batch size* kecil membuat waktu *training* lebih lambat per *epoch* karena pembaruan bobot terjadi sangat sering. *Batch size* besar jauh lebih cepat karena mengoptimalkan komputasi paralel pada memori.
-> 2. **Stabilitas kurva loss:** Kurva pada *batch size* kecil sangat fluktuatif/berisik. Pada *batch size* besar, pergerakan kurva jauh lebih stabil dan mulus.
-> 3. **Akurasi akhir:** *Batch size* yang moderat (misal 64) memberikan generalisasi terbaik. Terlalu besar berisiko terjebak di *local minima*, terlalu kecil rentan *overfitting*.
-> 
-> Pengamatan ini sangat sesuai dengan teori *trade-off* di kuliah: efisiensi waktu komputasi berbanding terbalik dengan kualitas konvergensi. Gradient descent gagal mencapai minimum global/lokal karena update parameter terlalu besar pada setiap iterasi.
+> Batch size kecil membuat training lebih lambat karena update dilakukan lebih sering. Kurva loss terlihat lebih “berisik” atau tidak stabil, tetapi kadang menghasilkan generalisasi yang lebih baik.  
+>
+> Batch size besar membuat training lebih cepat dan kurva loss lebih halus karena gradien dihitung dari lebih banyak data sekaligus. Namun jika terlalu besar, model kadang kurang optimal dalam generalisasi sehingga akurasi akhir sedikit lebih rendah.  
+>
+> Pengamatan ini sesuai dengan teori di slide kuliah bahwa batch size kecil memberikan noise yang membantu generalisasi, sedangkan batch size besar lebih stabil dan efisien secara komputasi.
 
 ---
 
@@ -66,10 +76,21 @@ Pada saat kalian menekan `model.fit(...)`, sebenarnya proses feed forward dan ba
 Jelaskan apa yang terjadi pada **bobot** dan **bias** model kalian di antara iterasi pertama dan terakhir.
 
 **Jawaban:**
-> Asumsi dataset Fashion-MNIST memiliki 60.000 sampel latih. Menggunakan konfigurasi terbaik kami (Batch size = 64, Epochs = 20):
-> **Jumlah iterasi = (60.000 / 64) × 20 = 937.5 × 20 = 18.750 kali.**
-> 
-> Di iterasi pertama, nilai bobot dan bias diinisialisasi secara acak, sehingga prediksi awal model sangat buruk. Melalui 18.750 kali siklus *feed forward* dan *back propagation*, model menghitung error dan terus mengoreksi/memperbarui nilai bobot dan bias tersebut sedikit demi sedikit. Pada iterasi terakhir, bobot dan bias telah terkalibrasi secara optimal untuk mengenali pola khusus pada gambar dengan *loss* seminimal mungkin.
+> Pada eksperimen terbaik kami:
+>
+> - Jumlah sample training = 54.000 (karena 10% dipakai validation)
+> - Batch size = 64
+> - Epoch = 20
+>
+> Maka jumlah back propagation kira-kira:
+>
+> $begin:math:display$
+\\left\(\\frac\{54000\}\{64\}\\right\) \\times 20 \\approx 16880
+$end:math:display$
+>
+> Jadi back propagation terjadi sekitar 16.880 kali.  
+>
+> Pada iterasi awal, bobot dan bias masih acak sehingga prediksi model buruk. Setelah ribuan iterasi, bobot dan bias terus diperbarui menggunakan gradient descent sehingga loss menurun dan accuracy meningkat. Di akhir training, parameter model menjadi lebih optimal dalam mengenali pola pada dataset.
 
 ---
 
@@ -78,7 +99,11 @@ Jelaskan apa yang terjadi pada **bobot** dan **bias** model kalian di antara ite
 Berdasarkan pengalaman kalian dengan Fashion-MNIST, menurut kalian apakah masalah ini *benar-benar* membutuhkan deep learning, atau bisa diselesaikan dengan machine learning klasik (misal Logistic Regression atau Random Forest)? Beri argumen.
 
 **Jawaban:**
-> Kasus klasifikasi gambar Fashion-MNIST sebenarnya bisa diselesaikan oleh *Machine Learning* klasik (seperti Random Forest atau SVM) dengan akurasi yang cukup baik, asalkan dilakukan *feature engineering* manual. Namun, *Deep Learning* menjadi **sangat tepat digunakan** di sini karena kemampuannya mengekstrak fitur hierarkis (seperti tekstur, bentuk, tepi pakaian) secara otomatis langsung dari piksel mentah. Hal ini membuat *Deep Learning* mampu menembus batas akurasi ML klasik (mencapai ~90%) dengan prapemrosesan data yang jauh lebih efisien.
+> Menurut kami, Fashion-MNIST masih bisa diselesaikan menggunakan machine learning klasik seperti Logistic Regression atau Random Forest karena ukuran gambar relatif kecil dan jumlah kelas hanya 10.  
+>
+> Namun deep learning memberikan keunggulan karena mampu mempelajari representasi fitur secara otomatis tanpa feature engineering manual. Deep learning juga lebih mudah dikembangkan untuk dataset gambar yang lebih kompleks.  
+>
+> Jadi untuk kasus sederhana, machine learning klasik mungkin sudah cukup, tetapi deep learning lebih fleksibel dan powerful untuk skala besar serta data yang lebih rumit.
 
 ---
 
@@ -89,6 +114,8 @@ Berdasarkan pengalaman kalian dengan Fashion-MNIST, menurut kalian apakah masala
 - Jika diberi waktu lebih, apa yang ingin kalian coba lagi?
 
 **Jawaban:**
-> - **Tantangan tersulit:** Menemukan keseimbangan (*sweet spot*) agar model tidak *overfitting*. Saat kami menambah neuron, akurasi *train* naik drastis tapi akurasi validasi tertinggal, sehingga kami harus melakukan *tuning* menggunakan *Dropout*.
-> - **Pelajaran terpenting:** *Hyperparameter* sangat bergantung satu sama lain. Mengubah *batch size* ternyata menuntut penyesuaian jumlah *epoch* agar model bisa belajar dengan optimal.
-> - **Jika diberi waktu lebih:** Kami ingin mencoba arsitektur *Convolutional Neural Network* (CNN) karena secara teori jauh lebih tangguh untuk mengekstrak fitur spasial pada data citra dibandingkan model *Dense* (MLP) biasa.
+> Tantangan paling sulit adalah menentukan kombinasi hyperparameter yang optimal karena perubahan kecil dapat memberikan hasil yang berbeda cukup besar. Kami juga perlu memahami apakah model mengalami overfitting atau underfitting dari kurva loss dan accuracy.  
+>
+> Pelajaran terpenting yang kami dapat adalah bahwa hyperparameter sangat mempengaruhi performa model deep learning. Kami juga belajar bahwa akurasi tinggi saja tidak cukup; generalisasi model juga penting.  
+>
+> Jika diberi waktu lebih, kami ingin mencoba activation function lain seperti ELU atau SELU, menambah hidden layer, menggunakan learning rate scheduler, dan mencoba arsitektur CNN agar performa pada data gambar menjadi lebih baik.
