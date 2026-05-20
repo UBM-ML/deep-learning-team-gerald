@@ -53,7 +53,7 @@ Apakah pengamatan ini sesuai dengan teori di slide kuliah?
 > 2. **Stabilitas kurva loss:** Kurva pada *batch size* kecil sangat fluktuatif/berisik. Pada *batch size* besar, pergerakan kurva jauh lebih stabil dan mulus.
 > 3. **Akurasi akhir:** *Batch size* yang moderat (misal 64) memberikan generalisasi terbaik. Terlalu besar berisiko terjebak di *local minima*, terlalu kecil rentan *overfitting*.
 > 
-> Pengamatan ini sangat sesuai dengan teori *trade-off* di kuliah: efisiensi waktu komputasi berbanding terbalik dengan kualitas konvergensi.
+> Pengamatan ini sangat sesuai dengan teori *trade-off* di kuliah: efisiensi waktu komputasi berbanding terbalik dengan kualitas konvergensi. Gradient descent gagal mencapai minimum global/lokal karena update parameter terlalu besar pada setiap iterasi.
 
 ---
 
