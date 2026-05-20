@@ -1,8 +1,8 @@
 # Tim
 
-**Nama Kelompok:** _(isi nama tim kalian)_
+**Nama Kelompok:** _(Team Gerald)_
 
-**Kelas:** _(misal: Machine Learning – Kelas A)_
+**Kelas:** _(misal: Machine Learning – Kelas 6PTI1A)_
 
 ## Anggota
 
@@ -10,7 +10,7 @@
 |---|---|---|---|
 |  |  | Lead / Coder |  |
 |  |  | Experiment logger |  |
-|  |  | Reflection writer |  |
+| Jackson | 32230165 | Student | s32230165-Jackson |
 |  |  | Presenter |  |
 
 > Role di atas hanya saran agar pembagian kerja jelas — boleh disesuaikan dengan tim kalian.
